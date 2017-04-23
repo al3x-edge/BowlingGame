@@ -6,11 +6,19 @@ class Game
     @total_throws = 0
   end
 
+  # Public: Calculate the score of the game at any point
+  #
+  # Examples
+  #
+  #   game.score
+  #   # => 100
+  #
+  # Returns the score of the game
   def score
     score = 0
     throwIndex = 0
 
-    for frame in 0..9
+    for _ in 0..9
       if strike?(throwIndex)
         score += strike_score(throwIndex)
         throwIndex += 1
@@ -26,6 +34,14 @@ class Game
     score
   end
 
+  # Public: Find the current frame of the game
+  #
+  # Examples
+  #
+  #   game.current_ball
+  #   # => 1
+  #
+  # Returns the current frame the game is currently in
   def current_frame
     frame = 1
     ball = 1
@@ -51,26 +67,47 @@ class Game
     frame
   end
 
+  # Public: Method to get which ball of the current frame
+  #
+  # Examples
+  #
+  #   game.current_ball
+  #   # => 1
+  #
+  # Returns the ball the player is using in the current frame
   def current_ball
     (@total_throws % 2) + 1
   end
 
-  # Throw ball for a current frame
-  def throw_ball(score=0)
-    @score += score
+  # Public: "Throw" a bowling ball in the game by recording its score
+  #
+  # score  - The amount of pins knocked down by the bowling ball.
+  #
+  # Examples
+  #
+  #   game.throw_ball(4)
+  #   # => 4
+  #
+  # Returns the current score of the game
+  def throw_ball(pinsDown=0)
+    @score += pinsDown
     @total_throws += 1
-    @throws << score
+    @throws << pinsDown
+    score
   end
 
   private
+  # Determine if there is a strike at index if score is 10
   def strike?(index)
     throw_score(index) == 10
   end
 
+  # Determine if there is a space at the index and index + 1 if the score is 10
   def spare?(index)
     throw_score(index) + throw_score(index+1) == 10
   end
 
+  # Returns the current score at an index if it exists; Otherwise it returns 0
   def throw_score(index)
     return 0 if @throws[index].nil?
     @throws[index]
