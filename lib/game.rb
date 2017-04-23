@@ -8,15 +8,18 @@ class Game
 
   def score
     score = 0
+    throwIndex = 0
 
-    for frame in 0..(@throws.length - 1)
-      frameThrow = frame * 2
-      if strike?(frameThrow)
-        score += strike_score(frameThrow)
-      elsif spare?(frameThrow)
-        score += spare_score(frameThrow)
+    for frame in 0..9
+      if strike?(throwIndex)
+        score += strike_score(throwIndex)
+        throwIndex += 1
+      elsif spare?(throwIndex)
+        score += spare_score(throwIndex)
+        throwIndex += 2
       else
-        score += throw_score(frameThrow) + throw_score(frameThrow + 1)
+        score += throw_score(throwIndex) + throw_score(throwIndex + 1)
+        throwIndex += 2
       end
     end
 
@@ -24,7 +27,28 @@ class Game
   end
 
   def current_frame
-    (@throws.length / 2) + 1
+    frame = 1
+    ball = 1
+
+    @throws.each_with_index do |throw, index|
+      # If less than 9 frames, make frames by either strikes or count ball throws
+      if frame < 9
+        if strike?(index)
+          frame += 1
+        elsif ball == 2
+          frame += 1
+          ball = 1
+        else
+          ball += 1
+        end
+      elsif frame == 9
+        # If entering flow with 9 (and has at least one more throw cause it hit here)
+        # then add one and mark the game done at 10 frames
+        frame += 1
+      end
+    end
+
+    frame
   end
 
   def current_ball
@@ -49,16 +73,16 @@ class Game
 
   def throw_score(index)
     return 0 if @throws[index].nil?
-    return @throws[index]
+    @throws[index]
   end
 
   # Return original 10 points and then combine points of next two ball rolls
   def strike_score(index)
-    return 10 + throw_score(index+2) + throw_score(index+3)
+    10 + throw_score(index+1) + throw_score(index+2)
   end
 
   # Return original 10 points and then combine points of next ball roll
   def spare_score(index)
-    return 10 + throw_score(index+2)
+    10 + throw_score(index+2)
   end
 end

@@ -69,13 +69,40 @@ describe Game do
   end
 
   it "has a score of 24 with a strike and two balls thrown of 3 and 4" do
-    roll_array(game, [10,0,3,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    roll_array(game, [10,3,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     expect(game.score).to eq 24
+  end
+
+  it "has a score of 53 with two strikes and two balls thrown of 5 and 4" do
+    roll_array(game, [10,10,5,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    expect(game.score).to eq 53
   end
 
   it "has a score of 20 with a spare and two balls thrown of 3 and 4" do
     roll_array(game, [5,5,3,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
     expect(game.score).to eq 20
+  end
+
+  it "has a score of 41 with two spares and one ball thrown of 8" do
+    roll_array(game, [5,5,5,5,8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    expect(game.score).to eq 41
+  end
+
+  context "perfect game" do
+    it "has a score of 300" do
+      roll_many(game, 12, 10)
+      expect(game.score).to eq 300
+    end
+
+    it "has a current frame of 10" do
+      roll_many(game, 12, 10)
+      expect(game.current_frame).to eq 10
+    end
+
+    it "has a current ball of 10" do
+      roll_many(game, 12, 10)
+      expect(game.current_ball).to eq 1
+    end
   end
 
   def roll_many(game, times, score)
